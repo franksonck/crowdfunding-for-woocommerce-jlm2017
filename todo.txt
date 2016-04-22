@@ -1,0 +1,12 @@
+== TODO ==
+
+* Dev - 27/10/2015 - Add to Cart radio buttons form - more customization options.
+* Dev - 18/10/2015 - Progress Bar - More visualization options.
+* Dev - 30/09/2015 - Single click to checkout on add to cart.
+* Dev - 30/09/2015 - Validate when saving product on backend.
+* Dev - 30/09/2015 - Dynamic pricing.
+
+== TODO, MAYBE ==
+
+* Dev - 26/11/2015 - Products by author.
+* Dev - 18/10/2015 - Run `get_product_orders_data()` in crons.
