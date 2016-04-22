@@ -91,6 +91,7 @@ class Alg_WC_Crowdfunding_Shortcodes {
 		if ( ! $product_id ) return '';
 		$current_value = $this->get_product_orders_data( 'orders_sum', $atts );
 		$max_value     = get_post_meta( $product_id, '_' . 'alg_crowdfunding_goal_sum', true );
+		if ( ! $max_value ) return '';
 		$return = '<progress value="' . $current_value . '" max="' . $max_value . '"></progress>';
 		return $this->output_shortcode( $return, $atts );
 //		return '<div class="meter"><span style="width: 33.3%"></span></div>';

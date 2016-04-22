@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Crowdfunding for WooCommerce
-Plugin URI: http://coder.fm/item/crowdfunding-for-woocommerce-plugin/
-Description: Crowdfunding Products for WooCommerce.
-Version: 2.1.0
+Plugin URI: https://github.com/jlm2017/crowdfunding-for-woocommerce-jlm2017
+Description: Crowdfunding Products for WooCommerce. (with adaptation from JLM 2017)
+Version: 2.1.0-jlm2017
 Author: Algoritmika Ltd
 Author URI: http://www.algoritmika.com
 Copyright: © 2015 Algoritmika Ltd.
