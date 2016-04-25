@@ -96,11 +96,6 @@ class Alg_WC_Crowdfunding_Admin {
 			$option_value = isset( $_POST[ $option['name'] ] ) ? $_POST[ $option['name'] ] : '';
 			if ( 'checkbox' === $option['type'] ) {
 				$option_value = ( '' != $option_value ) ? 'yes' : 'no';
-				$c = ( 'yes' === get_post_meta( $post_id, '_alg_crowdfunding_enabled', true ) ) ? $this->count_crowdfunding_products() : $this->count_crowdfunding_products() + 1;
-				if ( 'yes' === $option_value && $c >= apply_filters( 'alg_crowdfunding_option', 4 ) ) {
-					add_filter( 'redirect_post_location', array( $this, 'add_notice_query_var' ), 99 );
-					$option_value = 'no';
-				}
 			}
 			if ( $option['required'] && '' == $option_value ) {
 //				wc_add_notice( $option['title'] . ' ' . __( 'is required', 'alg-woocommerce-crowdfunding' ) );
