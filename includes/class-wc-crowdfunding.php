@@ -2,7 +2,7 @@
 /**
  * Crowdfunding for WooCommerce
  *
- * @version 2.1.0
+ * @version 2.2.0
  * @since   1.0.0
  * @author  Algoritmika Ltd.
  */
@@ -16,7 +16,7 @@ class Alg_WC_Crowdfunding {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.1.0
+	 * @version 2.2.0
 	 */
 	function __construct() {
 
@@ -72,6 +72,8 @@ class Alg_WC_Crowdfunding {
 			// is_purchasable
 			add_filter( 'woocommerce_is_purchasable', array( $this, 'is_purchasable' ), PHP_INT_MAX, 2 );
 
+			// Open Pricing
+			require_once( 'class-wc-crowdfunding-open-pricing.php' );
 		}
 	}
 

@@ -2,7 +2,7 @@
 /**
  * Crowdfunding for WooCommerce - Admin
  *
- * @version 2.1.0
+ * @version 2.2.1
  * @since   1.0.0
  * @author  Algoritmika Ltd.
  */
@@ -67,16 +67,17 @@ class Alg_WC_Crowdfunding_Admin {
 	/**
 	 * count_crowdfunding_products.
 	 *
-	 * @version 2.0.0
+	 * @version 2.2.0
 	 * @since   2.0.0
 	 */
-	function count_crowdfunding_products() {
+	function count_crowdfunding_products( $post_id ) {
 		$args = array(
 			'post_type'      => 'product',
 			'post_status'    => 'any',
-			'posts_per_page' => -1,
+			'posts_per_page' => 3,
 			'meta_key'       => '_alg_crowdfunding_enabled',
 			'meta_value'     => 'yes',
+			'post__not_in'   => array( $post_id ),
 		);
 		$loop = new WP_Query( $args );
 		return $loop->found_posts;
@@ -85,7 +86,7 @@ class Alg_WC_Crowdfunding_Admin {
 	/**
 	 * save_meta_box.
 	 *
-	 * @version 2.1.0
+	 * @version 2.2.1
 	 * @since   2.0.0
 	 */
 	function save_meta_box( $post_id, $post ) {
@@ -93,6 +94,9 @@ class Alg_WC_Crowdfunding_Admin {
 		if ( ! isset( $_POST[ 'alg_' . $this->id . '_save_post' ] ) ) return;
 		// Save options
 		foreach ( $this->get_crowdfunding_options() as $option ) {
+			if ( 'title' === $option['type'] ) {
+				continue;
+			}
 			$option_value = isset( $_POST[ $option['name'] ] ) ? $_POST[ $option['name'] ] : '';
 			if ( 'checkbox' === $option['type'] ) {
 				$option_value = ( '' != $option_value ) ? 'yes' : 'no';
@@ -123,7 +127,7 @@ class Alg_WC_Crowdfunding_Admin {
 	 */
 	function add_notice_query_var( $location ) {
 		remove_filter( 'redirect_post_location', array( $this, 'add_notice_query_var' ), 99 );
-		return add_query_arg( array( 'alg_admin_notice' => true/* $this->count_crowdfunding_products() */ ), $location );
+		return add_query_arg( array( 'alg_admin_notice' => true ), $location );
 	}
 
 	/**
@@ -162,7 +166,7 @@ class Alg_WC_Crowdfunding_Admin {
 	/**
 	 * create_meta_box.
 	 *
-	 * @version 2.0.0
+	 * @version 2.2.0
 	 * @since   2.0.0
 	 */
 	function create_meta_box() {
@@ -172,33 +176,39 @@ class Alg_WC_Crowdfunding_Admin {
 		$html .= $admin_notices;
 		$html .= '<table class="widefat striped">';
 		foreach ( $this->get_crowdfunding_options() as $option ) {
-			$option_value = get_post_meta( $current_post_id, '_' . $option['name'], true );
-			$input_ending = ' id="' . $option['name'] . '" name="' . $option['name'] . '" value="' . $option_value . '" placeholder="' . $option['placeholder'] . '">';
-			if ( 'checkbox' === $option['type'] && 'yes' === $option_value ) $input_ending = ' checked="checked"' . $input_ending;
-			$field_html = '';
-			switch ( $option['type'] ) {
-				case 'checkbox':
-				case 'number':
-				case 'text':
-					$field_html = '<input class="short" type="' . $option['type'] . '"' . $input_ending;
-					break;
-				case 'price':
-					$field_html = '<input class="short wc_input_price" type="number" step="0.0001"' . $input_ending;
-					break;
-				case 'date':
-					$field_html = '<input class="input-text" display="date" type="text"' . $input_ending;
-					break;
-				case 'time':
-					$field_html = '<input class="input-text" display="time" type="text"' . $input_ending;
-					break;
-				case 'textarea':
-					$field_html = '<textarea style="min-width:300px;"' . ' id="' . $option['name'] . '" name="' . $option['name'] . '">' . $option_value . '</textarea>';
-					break;
+			if ( 'title' === $option['type'] ) {
+				$html .= '<tr>';
+				$html .= '<th colspan="2" style="font-weight:bold;">' . $option['title'] . '</th>';
+				$html .= '</tr>';
+			} else {
+				$option_value = get_post_meta( $current_post_id, '_' . $option['name'], true );
+				$input_ending = ' id="' . $option['name'] . '" name="' . $option['name'] . '" value="' . $option_value . '" placeholder="' . $option['placeholder'] . '">';
+				if ( 'checkbox' === $option['type'] && 'yes' === $option_value ) $input_ending = ' checked="checked"' . $input_ending;
+				$field_html = '';
+				switch ( $option['type'] ) {
+					case 'checkbox':
+					case 'number':
+					case 'text':
+						$field_html = '<input class="short" type="' . $option['type'] . '"' . $input_ending;
+						break;
+					case 'price':
+						$field_html = '<input class="short wc_input_price" type="number" step="0.0001"' . $input_ending;
+						break;
+					case 'date':
+						$field_html = '<input class="input-text" display="date" type="text"' . $input_ending;
+						break;
+					case 'time':
+						$field_html = '<input class="input-text" display="time" type="text"' . $input_ending;
+						break;
+					case 'textarea':
+						$field_html = '<textarea style="min-width:300px;"' . ' id="' . $option['name'] . '" name="' . $option['name'] . '">' . $option_value . '</textarea>';
+						break;
+				}
+				$html .= '<tr>';
+				$html .= '<th style="width:25%;">' . $option['title'] . '</th>';
+				$html .= '<td>' . $field_html . '</td>';
+				$html .= '</tr>';
 			}
-			$html .= '<tr>';
-			$html .= '<th style="width:25%;">' . $option['title'] . '</th>';
-			$html .= '<td>' . $field_html . '</td>';
-			$html .= '</tr>';
 		}
 		$html .= '</table>';
 		$html .= '<input type="hidden" name="alg_' . $this->id . '_save_post" value="alg_' . $this->id . '_save_post">';
@@ -240,23 +250,46 @@ class Alg_WC_Crowdfunding_Admin {
 	/**
 	 * get_crowdfunding_options.
 	 *
-	 * @version 2.0.0
+	 * @version 2.2.0
 	 */
 	function get_crowdfunding_options() {
+		// NB: 'required' is not used at the moment...
 		return array(
 			array(
 				'name'     => 'alg_crowdfunding_enabled',
 				'placeholder' => '',
 				'type'     => 'checkbox',
 				'title'    => __( 'Enable', 'alg-woocommerce-crowdfunding' ),
-				'required' => true,
+				'required' => false,
+			),
+			array(
+				'type'     => 'title',
+				'title'    => __( 'Goals', 'alg-woocommerce-crowdfunding' ),
 			),
 			array(
 				'name'     => 'alg_crowdfunding_goal_sum',
 				'placeholder' => '',
 				'type'     => 'price',
 				'title'    => __( 'Goal', 'alg-woocommerce-crowdfunding' ) . ' (' . get_woocommerce_currency_symbol() . ')',
-				'required' => true,
+				'required' => false,
+			),
+			array(
+				'name'     => 'alg_crowdfunding_goal_backers',
+				'placeholder' => '',
+				'type'     => 'number',
+				'title'    => __( 'Goal', 'alg-woocommerce-crowdfunding' ) . ' (' . __( 'Backers', 'alg-woocommerce-crowdfunding' ) . ')',
+				'required' => false,
+			),
+			array(
+				'name'     => 'alg_crowdfunding_goal_items',
+				'placeholder' => '',
+				'type'     => 'number',
+				'title'    => __( 'Goal', 'alg-woocommerce-crowdfunding' ) . ' (' . __( 'Items', 'alg-woocommerce-crowdfunding' ) . ')',
+				'required' => false,
+			),
+			array(
+				'type'     => 'title',
+				'title'    => __( 'Time', 'alg-woocommerce-crowdfunding' ),
 			),
 			array(
 				'name'     => 'alg_crowdfunding_startdate',
@@ -287,6 +320,10 @@ class Alg_WC_Crowdfunding_Admin {
 				'required' => false,
 			),
 			array(
+				'type'     => 'title',
+				'title'    => __( 'Labels', 'alg-woocommerce-crowdfunding' ),
+			),
+			array(
 				'name'     => 'alg_crowdfunding_button_label_single',
 				'placeholder' => get_option( 'alg_woocommerce_crowdfunding_button_single' ),
 				'type'     => 'text',
@@ -298,6 +335,38 @@ class Alg_WC_Crowdfunding_Admin {
 				'placeholder' => get_option( 'alg_woocommerce_crowdfunding_button_archives' ),
 				'type'     => 'text',
 				'title'    => __( 'Add to Cart Button Text (Archive/Category)', 'alg-woocommerce-crowdfunding' ),
+				'required' => false,
+			),
+			array(
+				'type'     => 'title',
+				'title'    => __( 'Open Price (Name Your Price)', 'alg-woocommerce-crowdfunding' ),
+			),
+			array(
+				'name'     => 'alg_crowdfunding_product_open_price_enabled',
+				'placeholder' => '',
+				'type'     => 'checkbox',
+				'title'    => __( 'Enable Open Pricing', 'alg-woocommerce-crowdfunding' ),
+				'required' => false,
+			),
+			array(
+				'name'     => 'alg_crowdfunding_product_open_price_default_price',
+				'placeholder' => '',
+				'type'     => 'price',
+				'title'    => __( 'Default Price', 'alg-woocommerce-crowdfunding' ) . ' (' . get_woocommerce_currency_symbol() . ')',
+				'required' => false,
+			),
+			array(
+				'name'     => 'alg_crowdfunding_product_open_price_min_price',
+				'placeholder' => '',
+				'type'     => 'price',
+				'title'    => __( 'Min Price', 'alg-woocommerce-crowdfunding' ) . ' (' . get_woocommerce_currency_symbol() . ')',
+				'required' => false,
+			),
+			array(
+				'name'     => 'alg_crowdfunding_product_open_price_max_price',
+				'placeholder' => '',
+				'type'     => 'price',
+				'title'    => __( 'Max Price', 'alg-woocommerce-crowdfunding' ) . ' (' . get_woocommerce_currency_symbol() . ')',
 				'required' => false,
 			),
 		);
