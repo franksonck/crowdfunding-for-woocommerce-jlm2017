@@ -3,10 +3,12 @@
 Plugin Name: Crowdfunding for WooCommerce
 Plugin URI: http://coder.fm/item/crowdfunding-for-woocommerce-plugin/
 Description: Crowdfunding Products for WooCommerce.
-Version: 2.1.0
+Version: 2.2.1
 Author: Algoritmika Ltd
 Author URI: http://www.algoritmika.com
-Copyright: © 2015 Algoritmika Ltd.
+Text Domain: alg-woocommerce-crowdfunding
+Domain Path: /langs
+Copyright: © 2016 Algoritmika Ltd.
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 */
@@ -26,7 +28,7 @@ if ( ! class_exists( 'Alg_Woocommerce_Crowdfunding' ) ) :
  * Main Alg_Woocommerce_Crowdfunding Class
  *
  * @class   Alg_Woocommerce_Crowdfunding
- * @version 2.0.0
+ * @version 2.2.0
  */
 
 final class Alg_Woocommerce_Crowdfunding {
@@ -151,19 +153,21 @@ final class Alg_Woocommerce_Crowdfunding {
 	/**
 	 * Show action links on the plugin screen
 	 *
-	 * @version 2.0.0
+	 * @version 2.2.0
 	 * @param   mixed $links
 	 * @return  array
 	 */
 	public function action_links( $links ) {
-		return array_merge( array(
-			'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=alg_crowdfunding' )         . '">' . __( 'Settings', 'woocommerce' ) . '</a>',
-			'<a href="' . esc_url( 'http://coder.fm/item/crowdfunding-for-woocommerce-plugin/' ) . '">' . __( 'Unlock all', 'woocommerce' ) . '</a>',
-		), $links );
+		$settings_link   = '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=alg_crowdfunding' )         . '">' . __( 'Settings', 'woocommerce' )   . '</a>';
+		$unlock_all_link = '<a href="' . esc_url( 'http://coder.fm/item/crowdfunding-for-woocommerce-plugin/' ) . '">' . __( 'Unlock all', 'woocommerce' ) . '</a>';
+		$custom_links    = ( PHP_INT_MAX === apply_filters( 'alg_crowdfunding_option', 1 ) ) ? array( $settings_link ) : array( $settings_link, $unlock_all_link );
+		return array_merge( $custom_links, $links );
 	}
 
 	/**
 	 * Include required core files used in admin and on the frontend.
+	 *
+	 * @version 2.2.0
 	 */
 	private function includes() {
 
@@ -172,6 +176,7 @@ final class Alg_Woocommerce_Crowdfunding {
 		$settings = array();
 		$settings[] = require_once( 'includes/admin/class-wc-crowdfunding-settings-general.php' );
 		$settings[] = require_once( 'includes/admin/class-wc-crowdfunding-settings-product-info.php' );
+		$settings[] = require_once( 'includes/admin/class-wc-crowdfunding-settings-open-pricing.php' );
 		if ( is_admin() ) {
 			foreach ( $settings as $section ) {
 				foreach ( $section->get_settings() as $value ) {

@@ -1,10 +1,10 @@
 === Crowdfunding for WooCommerce ===
-Contributors: anbinder,algoritmika
+Contributors: anbinder
 Donate link: http://algoritmika.com/donate/
 Tags: woocommerce,crowdfunding
-Requires at least: 3.8
-Tested up to: 4.3
-Stable tag: 2.1.0
+Requires at least: 4.1
+Tested up to: 4.5
+Stable tag: 2.2.1
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -20,6 +20,7 @@ When adding or editing a product, you will have the possibility to set for each 
 * Goal (i.e. pledged) amount.
 * Start and end dates.
 * Custom "Back This Project" (i.e. "Add to Cart") button labels.
+* Enable "Open Pricing" (i.e. "Name Your Price") functionality.
 
 Also you will be able to:
 
@@ -27,11 +28,24 @@ Also you will be able to:
 * Modify and choose where to display crowdfunding info, that is: goal remaining, time remaining, already pledged etc.
 
 = Shortcodes =
-* product_total_orders – total number of orders (i.e. backers) for current product.
-* product_total_orders_sum – total sum (i.e. funded to date) for current product (formatted as price).
+
+When displaying crowdfunding data for the product, you should use plugin's shortcodes:
+
+= Backers & Money Shortcodes =
+* product_crowdfunding_total_sum – total sum (i.e. funded to date) for current product (formatted as price).
+* product_crowdfunding_total_backers – total number of orders (i.e. backers) for current product.
+* product_crowdfunding_total_items – total number of ordered items for current product.
 * product_crowdfunding_goal – end goal for current product (formatted as price).
 * product_crowdfunding_goal_remaining – sum remaining to reach the end goal for current product (formatted as price).
-* product_crowdfunding_goal_progress_bar – goal remaining as graphical progress bar.
+* product_crowdfunding_goal_remaining_progress_bar – goal remaining as graphical progress bar.
+* product_crowdfunding_goal_backers – end goal (backers) for current product.
+* product_crowdfunding_goal_backers_remaining – backers remaining to reach the end goal for current product.
+* product_crowdfunding_goal_backers_remaining_progress_bar – goal (backers) remaining as graphical progress bar.
+* product_crowdfunding_goal_items – end goal (items) for current product.
+* product_crowdfunding_goal_items_remaining – items remaining to reach the end goal for current product.
+* product_crowdfunding_goal_items_remaining_progress_bar – goal (items) remaining as graphical progress bar.
+
+= Time Shortcodes =
 * product_crowdfunding_startdate – starting date for current product.
 * product_crowdfunding_starttime – starting time for current product.
 * product_crowdfunding_startdatetime – starting date and time for current product.
@@ -39,7 +53,9 @@ Also you will be able to:
 * product_crowdfunding_deadline_time – ending time for current product.
 * product_crowdfunding_deadline_datetime – ending date and time for current product.
 * product_crowdfunding_time_remaining – time remaining till deadline.
-* product_crowdfunding_time_progress_bar – time remaining as graphical progress bar.
+* product_crowdfunding_time_remaining_progress_bar – time remaining as graphical progress bar.
+
+= More Shortcodes =
 * product_crowdfunding_add_to_cart_form – backers (add to cart) HTML form.
 
 = Feedback =
@@ -57,12 +73,39 @@ Also you will be able to:
 
 == Changelog ==
 
+= 2.2.1 - 13/05/2016 =
+* Fix - Titles in per product admin options table - caused PHP notice when saving product.
+* Dev - Text domain added to the plugin header.
+* Dev - `[product_crowdfunding_time_progress_bar]` renamed to `[product_crowdfunding_time_remaining_progress_bar]`.
+* Dev - POT file updated.
+
+= 2.2.0 - 10/05/2016 =
+* Fix - `total_orders` in `get_product_orders_data`.
+* Fix - Custom links fixed.
+* Dev - "Open Pricing (Name Your Price)" functionality added.
+* Dev - `starting_offset` shortcodes attribute added to `get_product_orders_data`.
+* Dev - `show_if_zero` attribute added to `output_shortcode` function.
+* Dev - `[product_crowdfunding_goal_backers]` shortcode added.
+* Dev - `[product_crowdfunding_goal_items]` shortcode added.
+* Dev - `[product_crowdfunding_goal_backers_remaining]` shortcode added.
+* Dev - `[product_crowdfunding_goal_items_remaining]` shortcode added.
+* Dev - `[product_crowdfunding_goal_backers_remaining_progress_bar]` shortcode added.
+* Dev - `[product_crowdfunding_goal_items_remaining_progress_bar]` shortcode added.
+* Dev - `[product_crowdfunding_goal_progress_bar]` renamed to `[product_crowdfunding_goal_remaining_progress_bar]`.
+* Dev - `[product_total_orders_sum]` renamed to `[product_crowdfunding_total_sum]`.
+* Dev - `[product_total_orders]` renamed to `[product_crowdfunding_total_backers]`.
+* Dev - `[product_crowdfunding_total_items]` shortcode added.
+* Dev - Formating date and time according to local format.
+* Dev - `post__not_in` added to `save_meta_box`.
+* Dev - POT file added.
+* Tweak - Titles added in per product admin options table.
+
 = 2.1.0 - 26/11/2015 =
 * Dev - WooCommerce Grouped products support added.
 * Dev - `product_id` attribute added in shortcodes.
 * Dev - `order_status` attribute added in orders shortcodes: `product_crowdfunding_goal_progress_bar`, `product_crowdfunding_goal_remaining`, `product_total_orders`, `product_total_orders_sum`.
 * Dev - "Crowdfunding" column added to admin products list.
-* Fix - Free version limitation counting fix.
+* Fix - Counting fix.
 * Fix - Additional check in `is_crowdfunding_product()`. Caused PHP notice.
 * Fix - Global `product` reset in `get_product_orders_data()` added.
 
